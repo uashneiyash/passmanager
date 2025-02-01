@@ -8,13 +8,18 @@ import math
 import hashlib
 import requests
 import threading
-import fcntl
 from collections import Counter
 from cryptography.fernet import Fernet
 
 DATA_FILE = 'passwords.json'
 KEY_FILE = 'key.key'
 HIBP_API_URL = "https://api.pwnedpasswords.com/range/"
+
+# Cross-platform file locking
+if os.name == 'nt':  # Windows
+    import msvcrt
+else:  # Unix-like
+    import fcntl
 
 def show_warning():
     """Display a warning message before starting the program."""
@@ -83,9 +88,15 @@ def save_data(data):
     json_data = json.dumps(data, indent=4).encode('utf-8')
     encrypted = fernet.encrypt(json_data)
     with open(DATA_FILE, 'wb') as f:
-        fcntl.flock(f, fcntl.LOCK_EX)  # Lock the file
+        if os.name == 'nt':  # Windows
+            msvcrt.locking(f.fileno(), msvcrt.LK_LOCK, len(encrypted))
+        else:  # Unix-like
+            fcntl.flock(f, fcntl.LOCK_EX)  # Lock the file
         f.write(encrypted)
-        fcntl.flock(f, fcntl.LOCK_UN)  # Unlock the file
+        if os.name == 'nt':  # Windows
+            msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, len(encrypted))
+        else:  # Unix-like
+            fcntl.flock(f, fcntl.LOCK_UN)  # Unlock the file
 
 def generate_secure_password(length=12, uppercase=True, lowercase=True, digits=True, special=True, avoid_ambiguous=True, include_spaces=False):
     """Generate a secure random password with customizable options."""
@@ -693,4 +704,4 @@ def main():
         gui_mode()
 
 if __name__ == "__main__":
-    main() 
+    main()
