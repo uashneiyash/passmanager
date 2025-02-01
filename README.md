@@ -12,4 +12,4 @@ You can modify it, if there is any issue then you can report it, just mention me
  - cd passmanager
  - python3 passmananger.py
 
-Data stores locally se beaware of curuption system failur or any system isshu
+"Data is stored locally. Please be aware of potential risks such as corruption, system failures, or other technical issues that may affect data integrity."
