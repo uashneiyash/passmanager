@@ -5,6 +5,10 @@ No marketing or my banner or other sh*t just code
 
 You can modify it, if there is any issue then you can report it, just mention me or give me credit as well!!
 
+## Requirements
+ - python3
+ - requests (`pipx install requests`"Linux"), (`pip install requests`"Windows")
+
 ## Installation
 
 
