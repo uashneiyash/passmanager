@@ -309,14 +309,13 @@ def cli_mode():
     while True:
         print("\n=== Password Manager CLI ===")
         print("1. Add Entry")
-        print("2. Retrieve Entry")
-        print("3. Delete Entry")
-        print("4. List All Accounts")
-        print("5. Generate Secure Password")
-        print("6. Check Password Leak")
-        print("7. Analyze Password")
-        print("8. Quit")
-        choice = input("Enter your choice (1-8): ").strip()
+        print("2. Delete Entry")
+        print("3. List All Accounts")
+        print("4. Generate Secure Password")
+        print("5. Check Password Leak")
+        print("6. Analyze Password")
+        print("7. Quit")
+        choice = input("Enter your choice (1-7): ").strip()
         
         if choice == '1':
             account = input("Enter account name: ").strip()
@@ -366,31 +365,6 @@ def cli_mode():
             save_data(data)
             print(f"Entry for '{account}' added.")
         elif choice == '2':
-            account = input("Enter account name to retrieve: ").strip()
-            if account in data:
-                entry = data[account]
-                print(f"Account: {account}")
-                print(f"  Username: {entry['username']}")
-                print(f"  Password: {entry['password']}")
-                crack_time = estimate_crack_time(entry['password'])
-                print(f"  Estimated crack time: {crack_time}")
-                leak_status = check_password_leak(entry['password'])
-                print(f"  Leak check: {leak_status}")
-                analysis = analyze_password(entry['password'])
-                print("  Password Analysis:")
-                print(f"    Entropy: {analysis['entropy']:.2f} bits")
-                print(f"    Order of Magnitude: {analysis['order_of_magnitude']}")
-                if analysis['warnings']:
-                    print("    Warnings:")
-                    for warning in analysis['warnings']:
-                        print(f"      - {warning}")
-                if analysis['suggestions']:
-                    print("    Suggestions:")
-                    for suggestion in analysis['suggestions']:
-                        print(f"      - {suggestion}")
-            else:
-                print("Account not found.")
-        elif choice == '3':
             account = input("Enter account name to delete: ").strip()
             if account in data:
                 del data[account]
@@ -398,14 +372,17 @@ def cli_mode():
                 print(f"Entry for '{account}' deleted.")
             else:
                 print("Account not found.")
-        elif choice == '4':
+        elif choice == '3':
             if data:
                 print("Stored Accounts:")
                 for account in data:
-                    print(f" - {account}")
+                    entry = data[account]
+                    print(f" - Account: {account}")
+                    print(f"   Username: {entry['username']}")
+                    print(f"   Password: {entry['password']}")
             else:
                 print("No accounts stored.")
-        elif choice == '5':
+        elif choice == '4':
             try:
                 length = int(input("Enter desired password length (default 12): ") or "12")
             except ValueError:
@@ -429,11 +406,11 @@ def cli_mode():
                 print("  Suggestions:")
                 for suggestion in analysis['suggestions']:
                     print(f"    - {suggestion}")
-        elif choice == '6':
+        elif choice == '5':
             password = input("Enter password to check: ").strip()
             leak_status = check_password_leak(password)
             print(f"Leak check: {leak_status}")
-        elif choice == '7':
+        elif choice == '6':
             password = input("Enter password to analyze: ").strip()
             analysis = analyze_password(password)
             print("Password Analysis:")
@@ -447,11 +424,11 @@ def cli_mode():
                 print("  Suggestions:")
                 for suggestion in analysis['suggestions']:
                     print(f"    - {suggestion}")
-        elif choice == '8':
+        elif choice == '7':
             print("Goodbye!")
             break
         else:
-            print("Invalid option. Please choose a number between 1 and 8.")
+            print("Invalid option. Please choose a number between 1 and 7.")
 
 def gui_mode():
     """Enhanced GUI with advanced password analysis."""
@@ -540,58 +517,6 @@ def gui_mode():
             analysis = analyze_password(password)
             messagebox.showinfo("Success", f"Entry for '{account}' added.\nEstimated crack time: {crack_time}\nLeak check: {leak_status}\nPassword Analysis:\nEntropy: {analysis['entropy']:.2f} bits\nOrder of Magnitude: {analysis['order_of_magnitude']}", parent=root)
     
-    def retrieve_entry():
-        account = simpledialog.askstring("Retrieve Entry", "Enter account name:", parent=root)
-        if account and account in data:
-            entry = data[account]
-            ret_win = tk.Toplevel(root)
-            ret_win.title(f"Details for {account}")
-            
-            # Username
-            ttk.Label(ret_win, text="Username:", font=("Helvetica", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
-            username_entry = ttk.Entry(ret_win, font=("Helvetica", 12), width=30)
-            username_entry.insert(0, entry['username'])
-            username_entry.config(state="readonly")
-            username_entry.grid(row=0, column=1, padx=10, pady=10)
-            ttk.Button(ret_win, text="Copy", command=lambda: copy_to_clipboard(entry['username'])).grid(row=0, column=2, padx=10, pady=10)
-            
-            # Password
-            ttk.Label(ret_win, text="Password:", font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
-            password_entry = ttk.Entry(ret_win, font=("Helvetica", 12), width=30)
-            password_entry.insert(0, entry['password'])
-            password_entry.config(show="*")
-            password_entry.grid(row=1, column=1, padx=10, pady=10)
-            ttk.Button(ret_win, text="Show", command=lambda: toggle_password_visibility(password_entry)).grid(row=1, column=2, padx=10, pady=10)
-            ttk.Button(ret_win, text="Copy", command=lambda: copy_to_clipboard(entry['password'])).grid(row=1, column=3, padx=10, pady=10)
-            
-            # Crack Time
-            crack_time = estimate_crack_time(entry['password'])
-            ttk.Label(ret_win, text="Crack Time:", font=("Helvetica", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="e")
-            ttk.Label(ret_win, text=crack_time, font=("Helvetica", 12)).grid(row=2, column=1, padx=10, pady=10, sticky="w")
-            
-            # Leak Check
-            leak_status = check_password_leak(entry['password'])
-            ttk.Label(ret_win, text="Leak Check:", font=("Helvetica", 12)).grid(row=3, column=0, padx=10, pady=10, sticky="e")
-            ttk.Label(ret_win, text=leak_status, font=("Helvetica", 12)).grid(row=3, column=1, padx=10, pady=10, sticky="w")
-            
-            # Password Analysis
-            analysis = analyze_password(entry['password'])
-            ttk.Label(ret_win, text="Password Analysis:", font=("Helvetica", 12, "bold")).grid(row=4, column=0, columnspan=3, pady=10)
-            ttk.Label(ret_win, text=f"Entropy: {analysis['entropy']:.2f} bits").grid(row=5, column=0, columnspan=3, pady=2)
-            ttk.Label(ret_win, text=f"Order of Magnitude: {analysis['order_of_magnitude']}").grid(row=6, column=0, columnspan=3, pady=2)
-            if analysis['warnings']:
-                ttk.Label(ret_win, text="Warnings:", font=("Helvetica", 12, "bold")).grid(row=7, column=0, columnspan=3, pady=5)
-                for i, warning in enumerate(analysis['warnings']):
-                    ttk.Label(ret_win, text=f"- {warning}").grid(row=8+i, column=0, columnspan=3, pady=2)
-            if analysis['suggestions']:
-                ttk.Label(ret_win, text="Suggestions:", font=("Helvetica", 12, "bold")).grid(row=8+len(analysis['warnings']), column=0, columnspan=3, pady=5)
-                for i, suggestion in enumerate(analysis['suggestions']):
-                    ttk.Label(ret_win, text=f"- {suggestion}").grid(row=9+len(analysis['warnings'])+i, column=0, columnspan=3, pady=2)
-            
-            ttk.Button(ret_win, text="Close", command=ret_win.destroy).grid(row=10+len(analysis['warnings'])+len(analysis['suggestions']), column=0, columnspan=3, pady=10)
-        elif account:
-            messagebox.showerror("Error", "Account not found.", parent=root)
-    
     def delete_entry():
         account = simpledialog.askstring("Delete Entry", "Enter account name:", parent=root)
         if account:
@@ -604,10 +529,80 @@ def gui_mode():
     
     def list_entries():
         if data:
-            entries = "\n".join(data.keys())
-            messagebox.showinfo("Stored Accounts", entries, parent=root)
+            list_win = tk.Toplevel(root)
+            list_win.title("Stored Accounts")
+            list_win.geometry("600x400")
+            list_win.minsize(600, 400)
+            
+            # Create a frame for the list
+            list_frame = ttk.Frame(list_win, padding=10)
+            list_frame.pack(expand=True, fill="both")
+            
+            # Add a scrollbar
+            scrollbar = ttk.Scrollbar(list_frame)
+            scrollbar.pack(side="right", fill="y")
+            
+            # Create a canvas to hold the list
+            canvas = tk.Canvas(list_frame, yscrollcommand=scrollbar.set)
+            canvas.pack(side="left", expand=True, fill="both")
+            
+            # Configure the scrollbar
+            scrollbar.config(command=canvas.yview)
+            
+            # Create a frame inside the canvas to hold the entries
+            entries_frame = ttk.Frame(canvas)
+            canvas.create_window((0, 0), window=entries_frame, anchor="nw")
+            
+            # Add entries to the frame
+            for account, entry in data.items():
+                entry_frame = ttk.Frame(entries_frame, padding=5)
+                entry_frame.pack(fill="x", pady=5)
+                
+                ttk.Label(entry_frame, text=f"Account: {account}", font=("Helvetica", 12, "bold")).pack(anchor="w")
+                ttk.Label(entry_frame, text=f"Username: {entry['username']}").pack(anchor="w")
+                
+                # Password entry with show/hide and copy buttons
+                password_frame = ttk.Frame(entry_frame)
+                password_frame.pack(anchor="w")
+                password_entry = ttk.Entry(password_frame, font=("Helvetica", 12), width=30)
+                password_entry.insert(0, entry['password'])
+                password_entry.config(show="*")
+                password_entry.pack(side="left", padx=5)
+                ttk.Button(password_frame, text="Show", command=lambda e=password_entry: toggle_password_visibility(e)).pack(side="left", padx=5)
+                ttk.Button(password_frame, text="Copy", command=lambda p=entry['password']: copy_to_clipboard(p)).pack(side="left", padx=5)
+                
+                # Update button
+                ttk.Button(entry_frame, text="Update", command=lambda a=account, u=entry['username'], p=entry['password']: update_entry(a, u, p)).pack(anchor="w", pady=5)
+            
+            # Update the canvas scroll region
+            entries_frame.update_idletasks()
+            canvas.config(scrollregion=canvas.bbox("all"))
         else:
             messagebox.showinfo("Stored Accounts", "No accounts stored.", parent=root)
+    
+    def update_entry(account, username, password):
+        update_win = tk.Toplevel(root)
+        update_win.title(f"Update Entry for {account}")
+        
+        ttk.Label(update_win, text="Username:", font=("Helvetica", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="e")
+        username_entry = ttk.Entry(update_win, font=("Helvetica", 12), width=30)
+        username_entry.insert(0, username)
+        username_entry.grid(row=0, column=1, padx=10, pady=10)
+        
+        ttk.Label(update_win, text="Password:", font=("Helvetica", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="e")
+        password_entry = ttk.Entry(update_win, font=("Helvetica", 12), width=30)
+        password_entry.insert(0, password)
+        password_entry.config(show="*")
+        password_entry.grid(row=1, column=1, padx=10, pady=10)
+        ttk.Button(update_win, text="Show", command=lambda: toggle_password_visibility(password_entry)).grid(row=1, column=2, padx=10, pady=10)
+        
+        ttk.Button(update_win, text="Save", command=lambda: save_updated_entry(account, username_entry.get(), password_entry.get(), update_win)).grid(row=2, column=1, pady=10)
+    
+    def save_updated_entry(account, username, password, window):
+        data[account] = {"username": username, "password": password}
+        save_data(data)
+        messagebox.showinfo("Success", f"Entry for '{account}' updated.", parent=root)
+        window.destroy()
     
     def generate_password_gui():
         try:
@@ -671,7 +666,6 @@ def gui_mode():
     btn_frame.pack(pady=20, fill="x")
     
     btn_add = ttk.Button(btn_frame, text="Add Entry", command=add_entry)
-    btn_retrieve = ttk.Button(btn_frame, text="Retrieve Entry", command=retrieve_entry)
     btn_delete = ttk.Button(btn_frame, text="Delete Entry", command=delete_entry)
     btn_list = ttk.Button(btn_frame, text="List All Accounts", command=list_entries)
     btn_generate = ttk.Button(btn_frame, text="Generate Password", command=generate_password_gui)
@@ -680,13 +674,12 @@ def gui_mode():
     btn_quit = ttk.Button(btn_frame, text="Quit", command=root.quit)
     
     btn_add.grid(row=0, column=0, padx=10, pady=10, sticky="ew")
-    btn_retrieve.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
-    btn_delete.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
-    btn_list.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
-    btn_generate.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
-    btn_leak_check.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
-    btn_analyze.grid(row=3, column=0, padx=10, pady=10, sticky="ew")
-    btn_quit.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+    btn_delete.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+    btn_list.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
+    btn_generate.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+    btn_leak_check.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+    btn_analyze.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+    btn_quit.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
     
     btn_frame.columnconfigure(0, weight=1)
     btn_frame.columnconfigure(1, weight=1)
