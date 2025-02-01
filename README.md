@@ -14,6 +14,7 @@ You can modify it, if there is any issue then you can report it, just mention me
 
  - `git clone https://github.com/uashneiyash/passmanager.git`
  - `cd passmanager`
+ - `pip install -r requirements.txt` "if not work use `--break-system-packages`"
  - `python3 passmananger.py`
 
 "Data is stored locally. Please be aware of potential risks such as corruption, system failures, or other technical issues that may affect data integrity."
