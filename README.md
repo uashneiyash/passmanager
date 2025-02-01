@@ -15,4 +15,4 @@ You can modify it, if there is any issue then you can report it, just mention me
 "Data is stored locally. Please be aware of potential risks such as corruption, system failures, or other technical issues that may affect data integrity."
 
 ## Feature
- - wanna use in cli then 'python3 passmananger.py cli'
+ - wanna use in cli then `python3 passmananger.py cli`
