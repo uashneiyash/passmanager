@@ -11,3 +11,5 @@ You can modify it, if there is any issue then you can report it, just mention me
  - git clone https://github.com/uashneiyash/passmanager.git
  - cd passmanager
  - python3 passmananger.py
+
+Data stores locally se beaware of curuption system failur or any system isshu
