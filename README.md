@@ -5,5 +5,9 @@ No marketing or my banner or other sh*t just code
 
 You can modify it, if there is any issue then you can report it, just mention me or give me credit as well!!
 
-Installation
+## Installation
 
+
+ - git clone https://github.com/uashneiyash/passmanager.git
+ - cd passmanager
+ - python3 passmananger.py
