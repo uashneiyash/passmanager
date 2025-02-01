@@ -8,11 +8,12 @@ You can modify it, if there is any issue then you can report it, just mention me
 ## Installation
 
 
- - git clone https://github.com/uashneiyash/passmanager.git
- - cd passmanager
- - python3 passmananger.py
+ - `git clone https://github.com/uashneiyash/passmanager.git`
+ - `cd passmanager`
+ - `python3 passmananger.py`
 
 "Data is stored locally. Please be aware of potential risks such as corruption, system failures, or other technical issues that may affect data integrity."
 
 ## Feature
- - wanna use in cli then `python3 passmananger.py cli`
+ - Wanna use in CLI then `python3 passmananger.py cli`
+ - For GUI just `python3 passmananger.py`
